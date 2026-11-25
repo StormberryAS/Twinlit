@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 11 and earlier (Auto Backup): NOTHING is backed up (D23). The rules exclude every
+  domain, because a file with no <include> means "back up everything", which would copy the
+  chosen place (shared_prefs/twinlit.xml) and the alarm store off the device and break the
+  footer's promise that places and alarms never leave it. A restored phone starts with no place.
+  data_extraction_rules.xml says the same for Android 12 and later. BackupRulesTest parses both.
+-->
+<full-backup-content>
+    <exclude domain="root" path="." />
+    <exclude domain="file" path="." />
+    <exclude domain="database" path="." />
+    <exclude domain="sharedpref" path="." />
+    <exclude domain="external" path="." />
+    <exclude domain="device_root" path="." />
+    <exclude domain="device_file" path="." />
+    <exclude domain="device_database" path="." />
+    <exclude domain="device_sharedpref" path="." />
+</full-backup-content>

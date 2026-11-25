@@ -1,0 +1,217 @@
+name: Android release
+
+# Twinlit's release workflow. It has not run yet: the first run is the tag android-v0.0.1.
+# Tagged android-v* only, so app releases never collide with the tags of the website, and nothing
+# else starts it (no manual run), so no branch can ever reach the signing secrets.
+#
+# The signing secrets live in the environment "release" of the repository (KEYSTORE_BASE64,
+# KEYSTORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD) and in no repository secret. That environment
+# accepts android-v* tags only and waits for one of its required reviewers before the job starts.
+# EXPECTED_CERT below is the SHA-256 of the release certificate (alias release, made on
+# 2026-11-23); the verify step fails if the APK is signed with any other key.
+on:
+  push:
+    tags: ["android-v*"]
+
+permissions:
+  contents: write        # create the release
+  id-token: write        # sign the provenance attestation
+  attestations: write    # publish it
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # Holds the signing secrets, and only android-v* tags may use it (see the header).
+    environment: release
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
+
+      # The city catalogue is pinned by hash (the Android build copies data/cities.tsv, and
+      # CatalogueHashTest holds it to the same hash): a different catalogue is a deliberate act that
+      # changes this line, the test and the "25,007 cities" texts together.
+      - name: Check the city catalogue pin
+        run: |
+          set -euo pipefail
+          echo "dcd3b5f163644d5d9c7cc607413c8563cc4e393b6d1fee23af24467e130376ef  data/cities.tsv" | sha256sum -c -
+
+      # The runner ships an Android SDK, but not necessarily platform 37.1, and its
+      # bundled sdkmanager may be too old to know that package exists. Refresh
+      # cmdline-tools first, then install, and let the output show if it fails.
+      - name: Install SDK packages the runner may not have
+        working-directory: android
+        run: |
+          set -euo pipefail
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKMANAGER" ] || SDKMANAGER="$(command -v sdkmanager)"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "cmdline-tools;latest" > /dev/null
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "platforms;android-37.1" "build-tools;36.0.0"
+
+      # The keystore is decoded into RUNNER_TEMP, which sits outside the workspace,
+      # so no artifact glob or accidental `git add` can ever pick it up.
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+
+      # Unit tests gate the release, they are not just a dev-loop convenience. The
+      # golden corpus is the entire safety net for the hand-written SunCalc port,
+      # and the occurrence tests are the only thing standing between a bad offset
+      # and an alarm at the wrong hour.
+      # --no-configuration-cache: the release passwords arrive as ORG_GRADLE_PROJECT_* values, and a configuration
+      # cache entry would store them in android/.gradle/configuration-cache on the runner (build.gradle.kts
+      # already refuses this for the upload passwords).
+      - name: Build signed release APK
+        working-directory: android
+        env:
+          ORG_GRADLE_PROJECT_RELEASE_STORE_FILE: ${{ runner.temp }}/release.jks
+          ORG_GRADLE_PROJECT_RELEASE_STORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          ORG_GRADLE_PROJECT_RELEASE_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          ORG_GRADLE_PROJECT_RELEASE_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: ./gradlew --no-daemon --no-configuration-cache :app:testDebugUnitTest :app:lintRelease :app:assembleRelease
+
+      # Fails the release if signing silently fell back to unsigned, and diffs the
+      # declared permissions against the committed allowlist.
+      - name: Verify signature and permissions
+        working-directory: android
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+
+          # Newest build-tools that actually carries what this step needs. Taking the
+          # highest version blindly is not safe: a partial download, or a release that
+          # drops the legacy aapt, would fail the build for a reason that has nothing
+          # to do with the APK.
+          BUILD_TOOLS=""
+          for d in $(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -Vr); do
+            if [ -x "$d/apksigner" ] && { [ -x "$d/aapt2" ] || [ -x "$d/aapt" ]; }; then
+              BUILD_TOOLS="${d%/}"
+              break
+            fi
+          done
+          if [ -z "$BUILD_TOOLS" ]; then
+            echo "::error::no build-tools install carries both apksigner and aapt/aapt2"
+            ls -d "$ANDROID_HOME"/build-tools/*/ || true
+            exit 1
+          fi
+          echo "Using $BUILD_TOOLS"
+
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK"
+
+          # PIN THE SIGNING CERTIFICATE, do not merely check that one exists.
+          # apksigner's exit status catches an UNSIGNED apk, but an apk validly
+          # signed with the WRONG key passes it and reaches the release. Android
+          # enforces certificate continuity, so publishing under the wrong key
+          # permanently forks the install base: existing users would get
+          # INSTALL_FAILED_UPDATE_INCOMPATIBLE and the only fix is uninstalling.
+          # This is the one mistake in the pipeline that cannot be undone, so the
+          # expected fingerprint is asserted rather than eyeballed in a log.
+          # Twinlit's own release certificate (alias release, made on 2026-11-23). Never put another
+          # app's fingerprint here, SunApp's and MoonApp's included.
+          EXPECTED_CERT="d54d480d04ece7e8e3a0215abfacffaa2f0f84e4b0303c224a6b89bc84a77418"
+          if [[ ! "$EXPECTED_CERT" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "::error::the release certificate pinned in this workflow is not a SHA-256"
+            exit 1
+          fi
+          ACTUAL_CERT=$("$BUILD_TOOLS/apksigner" verify --print-certs "$APK" \
+            | grep -i 'certificate SHA-256 digest' | head -1 | awk '{print $NF}')
+          if [ "$ACTUAL_CERT" != "$EXPECTED_CERT" ]; then
+            echo "::error::signing certificate mismatch"
+            echo "  expected $EXPECTED_CERT"
+            echo "  actual   $ACTUAL_CERT"
+            exit 1
+          fi
+          echo "Signing certificate matches the pinned fingerprint."
+
+          AAPT="$BUILD_TOOLS/aapt2"
+          [ -x "$AAPT" ] || AAPT="$BUILD_TOOLS/aapt"
+
+          # Diff in BOTH directions. An unexpected permission is the obvious failure,
+          # but a listed one that has vanished matters just as much: a missing
+          # RECEIVE_BOOT_COMPLETED would not break the build, it would quietly make
+          # every alarm die at the next reboot.
+          "$AAPT" dump permissions "$APK" \
+            | sed -n "s/^uses-permission: name='\([^']*\)'.*/\1/p" \
+            | sort -u > /tmp/actual-permissions.txt
+          grep -vE '^\s*(#|$)' expected-permissions.txt | sort -u > /tmp/expected-permissions.txt
+
+          if ! diff -u /tmp/expected-permissions.txt /tmp/actual-permissions.txt; then
+            echo "::error::declared permissions do not match android/expected-permissions.txt"
+            echo "If the change is intended, update that file in the same commit as the manifest."
+            exit 1
+          fi
+          echo "Verified: permissions match the committed allowlist ($(wc -l < /tmp/actual-permissions.txt) entries)."
+
+      # The Google Play edition is the same app as this APK (the parity rule): the same
+      # manifest and code, with only the package name, the signing and the versionCode changed.
+      # Gradle writes the Play edition's merged manifest without the upload key (the key guards sit
+      # on packageRelease and signReleaseBundle only), and tools/check-play-bundle.sh --manifest
+      # checks it against expected-permissions.txt, the five alarm components, the six widget
+      # receivers (three Sun, three Moon) and the systemExempted service, with the Play versionCode at 1000 + this APK's.
+      # The upload key never reaches CI; the bundle itself is built and checked on the Dell. The APK
+      # is hashed before and after, so this step cannot change what the steps below attest and
+      # publish.
+      - name: Check the Google Play manifest
+        working-directory: android
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+          MERGED=app/build/intermediates/merged_manifests/release/processReleaseManifest/AndroidManifest.xml
+          before="$(sha256sum "$APK")"
+          read -r NAME CODE < <(python3 -I -c '
+          import sys, xml.etree.ElementTree as ET
+          r = ET.parse(sys.argv[1]).getroot(); A = "{http://schemas.android.com/apk/res/android}"
+          assert r.get("package") == "no.stormberry.twinlit", r.get("package")
+          print(r.get(A + "versionName"), r.get(A + "versionCode"))' "$MERGED")
+          [[ "$NAME" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && "$CODE" =~ ^[0-9]+$ ]] || { echo "::error::no version in $MERGED"; exit 1; }
+          echo "Sovereign $NAME code $CODE, so Play $NAME code $((1000 + CODE))"
+          ./gradlew --no-daemon --no-configuration-cache -PplayBuild=true :app:processReleaseManifest
+          tools/check-play-bundle.sh --manifest "$MERGED" "$NAME" "$((1000 + CODE))"
+          [ "$(sha256sum "$APK")" = "$before" ] || { echo "::error::the Play manifest step changed the APK"; exit 1; }
+
+      - name: Remove keystore
+        if: always()
+        run: shred -u "$RUNNER_TEMP/release.jks" || rm -f "$RUNNER_TEMP/release.jks"
+
+      # Lets anyone prove this exact binary came out of this repo and this run:
+      #   gh attestation verify Twinlit-v0.0.1.apk -R StormberryAS/Twinlit
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          subject-path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        working-directory: android
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          APK=app/build/outputs/apk/release/app-release.apk
+          # Strips only the "android-" prefix, so the tag android-v0.0.1 yields
+          # v0.0.1 and the asset carries the v. Keep this in step with the `match`
+          # pattern in zapstore.yaml (ReleaseKitTest holds the two together).
+          VERSION="${GITHUB_REF_NAME#android-}"
+          cp "$APK" "Twinlit-${VERSION}.apk"
+          sha256sum "Twinlit-${VERSION}.apk" > "Twinlit-${VERSION}.apk.sha256"
+          # The release body is the store release note of this version (fastlane changelogs/<versionCode>.txt).
+          CODE="$(sed -n 's/^[[:space:]]*versionCode = \([0-9][0-9]*\)$/\1/p' app/build.gradle.kts)"
+          NOTES="../fastlane/metadata/android/en-US/changelogs/${CODE}.txt"
+          [[ "$CODE" =~ ^[0-9]+$ && -s "$NOTES" ]] || { echo "::error::no release note at $NOTES"; exit 1; }
+          gh release create "$GITHUB_REF_NAME" \
+            "Twinlit-${VERSION}.apk" \
+            "Twinlit-${VERSION}.apk.sha256" \
+            --title "Twinlit ${VERSION}" \
+            --notes-file "$NOTES"

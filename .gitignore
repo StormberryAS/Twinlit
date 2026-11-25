@@ -1,0 +1,30 @@
+# Signing material never enters git. The keystores live outside the repository tree entirely (see
+# android/README.md), so even `git add -f` cannot capture one. android/.gitignore repeats the Gradle
+# parts for anyone who works from that folder.
+keystore.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pepk
+
+# Secrets (zsp offers to persist SIGN_WITH here; never commit it)
+.env
+.env.*
+!.env.example
+
+# Build output and tool state
+build/
+.gradle/
+.kotlin/
+.cxx/
+local.properties
+captures/
+.idea/
+*.iml
+
+# Python virtual environments and caches (the icon and font tools)
+.venv/
+venv/
+__pycache__/
+*.py[cod]

@@ -1,0 +1,11 @@
+9d9cc5ef1e46b96cdc59374c3360ea60eabc28a55d464246924aa3a918cb595d  fastlane/metadata/android/en-US/images/icon.png
+576968b675fb0a7f6710a1e77432c2f64f18e41067950fd12f1c99b22c1899bb  android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+951b5f4d80ce464257a0dce6ef3293b90956b7b85748cd724d4358c74f8eb2e4  android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+9f5d44c481a66914ef133a3e0c7583845c6e18d28ca5dddf41d54a0873bdf8ad  android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+53449634a381e1f3a5230d34cd4f78e9748fc95f8f00de8bc774f7b305715ff9  android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+c60cdc38016b4955d4261218b422c999ab7360f8c1ce741c4a988349f7bcedef  android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+39cecec0064de9e362afebc9f3ae138e7fb08bcd78239a193469d41f08b82ce3  android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+0325778c7ce1e27a31a7de8cf276302bbb57b5b2efe7e02d364b9def35cb8350  android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+ecc42de99b9ed7281d8c8eb34a57172f306e5008df599a88f51055e7745001c3  android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+a740ee465d8fc6feb74557890a48db817f8c46f04977afa6c25b91a51308ec20  android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+87c4d05d969ea658de9d87f00ed59d93fd06ece61ed0345a22a48fdc82044907  android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png

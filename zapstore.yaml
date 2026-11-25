@@ -1,0 +1,63 @@
+# Zapstore publishing manifest (https://zapstore.dev/docs/publish).
+#
+# `pubkey` is load-bearing: on first publish the Zapstore relay fetches this file
+# from the repository and whitelists the key found here. It must stay identical to
+# the key `zsp` signs with (SIGN_WITH). It is the Stormberry AS Nostr identity.
+#
+# PUBLISH WITH THE CONFIG FILE, NOT -r:
+#     SIGN_WITH=<nsec|bunker://...> zsp publish zapstore.yaml
+# `zsp publish -r github.com/...` is a SOURCE flag and never reads this file, so
+# tags, license and website are silently dropped from the kind 32267 app event.
+#
+# Sovereign package: no.stormberry.twinlit
+# Play Store package: no.stormberry.twinlit.play
+#
+# The description is the Google Play full description (fastlane full_description.txt), word
+# for word: the two stores say the same thing (the parity rule). A test pins that.
+
+repository: https://github.com/StormberryAS/Twinlit
+pubkey: npub1zz9w77p2jkn95t0st9tcuea8zdn2vknf0ctrwyd4g46w3kswdccqesr0pa
+
+name: Twinlit
+summary: Sun and moon alarms, times and widgets for anywhere on Earth, computed offline
+description: |
+  Twinlit is an alarm clock that follows the sun and the moon rather than the clock. Set an alarm for half an hour before sunrise, at moonrise, or on the full moon night, and it recomputes every day as the seasons and the moon move. When you build an alarm it shows you its real fire times before you save it.
+
+  It also calculates sunrise, solar noon and sunset, the moon's phase, moonrise, transit and moonset, for any place on Earth, in that place's own timezone, and says plainly when the sun or the moon does not rise or set at all.
+
+  Six home screen widgets show the next sunrise or sunset, today's sun times and twilight, and today's moon with its phase and times.
+
+  Three tabs: Sun, Moon and Alarms. Choose how it looks under Appearance: Sun, Moon, Twilight, Auto (which follows the sun's daily rhythm at your chosen place) or System.
+
+  It runs entirely on your device. There is no INTERNET permission, so it cannot send anything, and there is no location permission either: places come from a bundled catalogue of 25,007 cities or from coordinates you type.
+
+  The nine permissions Android lists for this app are all for the alarms: to ring on time, to show the alarm over the lock screen, to keep ringing while the screen is off, and to set your alarms again after a restart. Sun and moon times need none of them, and nothing is asked until you create your first alarm.
+
+  Twinlit is a functioning prototype by Stormberry AS, Norway. It replaces SunApp and MoonApp.
+
+tags:
+  - privacy
+  - utilities
+  - offline
+  - weather
+  - astronomy
+  - alarm
+  - moon
+  - calendar
+
+license: MIT
+website: https://twinlit.stormberry.as
+
+# Store icon and screenshot definitions. Zapstore reads only phoneScreenshots, the folder
+# the Google Play listing uses too: the same six files on both stores.
+icon: ./fastlane/metadata/android/en-US/images/icon.png
+
+images:
+  - ./fastlane/metadata/android/en-US/images/phoneScreenshots/01-sun_phone.png
+  - ./fastlane/metadata/android/en-US/images/phoneScreenshots/02-moon_phone.png
+  - ./fastlane/metadata/android/en-US/images/phoneScreenshots/03-alarms_phone.png
+  - ./fastlane/metadata/android/en-US/images/phoneScreenshots/04-editor_phone.png
+  - ./fastlane/metadata/android/en-US/images/phoneScreenshots/05-widgets_phone.png
+  - ./fastlane/metadata/android/en-US/images/phoneScreenshots/06-appearance_phone.png
+
+match: "Twinlit-.*\\.apk$"

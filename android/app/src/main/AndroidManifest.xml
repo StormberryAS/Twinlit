@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      PERMISSION INVENTORY, Twinlit 0.0.1. Nine, and this comment is the reviewer's
+      copy of the list; expected-permissions.txt is the machine's copy, and
+      ManifestTest and the release workflow (D34) diff the manifest and the
+      built APK against it in both directions.
+
+      All nine are declared from the first milestone on, so that the permission set never changes
+      after the first upload (DECISIONS D42: Marcos may still choose SCHEDULE_EXACT_ALARM on every
+      API before that upload). The alarm components that use them (the ring screen, the service
+      and the receivers below) came with milestone M5.
+
+      Every one of the nine is an INSTALL-TIME permission. Android provides no way
+      to defer one, so all nine appear in the F-Droid and Zapstore listing from the
+      moment 0.0.1 is installed, whether or not the user ever creates an alarm.
+      README.md (milestone M7) states it in exactly those terms rather than the easier and false
+      "no permissions unless you use alarms". What is genuinely deferred is every
+      user-visible grant: no dialog appears and no special access is requested until
+      the first alarm is saved, and on Android 7 to 11 nothing is ever requested.
+
+      One honest sentence each. If a sentence stops being true, the permission goes.
+
+      USE_EXACT_ALARM
+          Fires the alarm at the minute the user set, on Android 13 and later, and
+          is granted at install because an alarm clock is this app's primary
+          function.
+      SCHEDULE_EXACT_ALARM (maxSdkVersion 32)
+          The same capability on Android 12 and 12L, where USE_EXACT_ALARM does not
+          exist yet; capped at 32 so no newer device is ever asked for it, and the
+          cap is why it is a one-time Settings deep link on 31/32 rather than a
+          permanent entry in the listing of a modern install.
+      POST_NOTIFICATIONS
+          The alarm shows through a notification, so on Android 13 and later this is
+          what puts it, with Snooze and Dismiss, on the screen and over the lock screen
+          (without it the alarm still sounds and opening the app stops it); it
+          is the only runtime dialog the app ever shows.
+      RECEIVE_BOOT_COMPLETED
+          A reboot erases every pending alarm, so SystemEventReceiver recomputes and
+          re-arms them when the device comes back, including before the first unlock.
+      WAKE_LOCK
+          Keeps the CPU awake for the few seconds between the alarm broadcast landing
+          and AlarmService taking over the audio, so a dozing device cannot fall back
+          asleep between the two.
+      VIBRATE
+          Vibrates while ringing; per rule, and switchable off.
+      USE_FULL_SCREEN_INTENT
+          Puts the ring screen in front of the lock screen instead of a notification a
+          sleeping person would have to go looking for.
+      FOREGROUND_SERVICE
+          Ringing runs as a foreground service so the system cannot kill the audio
+          part-way through.
+      FOREGROUND_SERVICE_SYSTEM_EXEMPTED
+          The service type Android 14 and later require for that service. It is
+          systemExempted, the type the platform offers to apps that hold an exact-alarm
+          permission (USE_EXACT_ALARM above). The tone is
+          still played on AudioAttributes USAGE_ALARM, but an alarm that rings by itself is not
+          media playback that a user starts, so that type did not describe it. Both editions
+          declare the same type.
+    -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
+
+    <!--
+      Removals, not requests. Nothing below is being asked for; each line tells the
+      manifest merger to strip the permission if any dependency ever merges it in.
+
+      NO INTERNET. That is the headline claim of this app and the one worth checking
+      yourself with `aapt dump permissions`. The solar maths, the city catalogue and
+      the IANA zone identifiers are all compiled into the APK, so there is nothing to
+      fetch and no way to exfiltrate what you searched for.
+
+      NO LOCATION, coarse or fine. Coordinates come from the bundled city catalogue
+      or from numbers the user types. The alarm feature never introduces a location
+      permission (the owner's confirmed decision 4 in both source apps, kept), and these two lines are what stops
+      a future dependency from introducing one by accident.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
+
+    <!--
+      androidx.core declares a private signature permission for its registerReceiver
+      compatibility shim. It grants nothing to anyone but this app, yet it still shows
+      up in `aapt dump permissions` and in every APK inspector, which muddies a
+      permission inventory that is meant to be read line by line.
+
+      Both halves are removed, which carries one standing constraint on the alarm
+      runtime: no code in this app may call ContextCompat.registerReceiver with
+      RECEIVER_NOT_EXPORTED, because on API 26 to 32 that shim registers the receiver
+      behind this very permission, and with the permission stripped the receiver would
+      silently receive nothing at all. No receiver is registered at runtime today (one source app once had
+      a Battery Saver listener for its widgets; it is not part of Twinlit). Re-check this
+      comment before adding a dynamic registration.
+    -->
+    <permission
+        android:name="${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        tools:node="remove" />
+    <uses-permission
+        android:name="${applicationId}.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        tools:node="remove" />
+
+    <application
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Twinlit">
+
+        <!--
+          allowBackup is false and both rule files exclude every domain (DECISIONS D23): nothing
+          leaves the device, so a new phone starts with no place, no alarms and the first-run
+          notice again. BackupRulesTest parses both files; ManifestTest pins the attribute.
+
+          The launcher activity. It repeats the application's label and icon on purpose (RedundantLabel
+          is ignored): Recents on API 24 showed the class name and the generic icon without them.
+
+          adjustResize hands the keyboard to the app as an inset
+          (MainActivity sets the same mode in code, before the content): the window never pans, so
+          no text sits behind the status bar while a field is focused. uiMode is in configChanges
+          so that a switch of the phone's light or dark setting reaches the Compose root without
+          recreating the activity (the System choice of Appearance follows it).
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher"
+            tools:ignore="RedundantLabel"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density|fontScale"
+            android:theme="@style/Theme.Twinlit"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          The four AlarmClock intent-API actions, answered by a trampoline that reads the
+          request, hands it to the app's own UI or to the alarm runtime, and finishes before
+          drawing a frame. This is the entry point any app on the device can reach, so it is
+          deliberately the smallest surface in the app. The translucent platform theme is what
+          makes "finishes in onCreate" invisible rather than a black flash.
+
+          Answering these is also the concrete evidence that this app's primary function
+          really is an alarm clock, which is the claim USE_EXACT_ALARM and
+          USE_FULL_SCREEN_INTENT rest on.
+
+          android:permission (fix round 1): without it any installed app could send DISMISS_ALARM
+          or SNOOZE_ALARM straight to this component and silence the alarm that is ringing. The
+          AOSP clock protects the same entry point with the same permission, and the AlarmClock
+          callers (assistants, clock apps) hold it. It is a protection attribute, not a
+          uses-permission: the nine permissions and expected-permissions.txt do not change.
+        -->
+        <activity
+            android:name=".alarm.AlarmIntentActivity"
+            android:exported="true"
+            android:permission="com.android.alarm.permission.SET_ALARM"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity="">
+            <intent-filter>
+                <action android:name="android.intent.action.SET_ALARM" />
+                <action android:name="android.intent.action.SHOW_ALARMS" />
+                <action android:name="android.intent.action.DISMISS_ALARM" />
+                <action android:name="android.intent.action.SNOOZE_ALARM" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          The ring screen. exported="false" because the only thing that ever launches it is
+          Twinlit's own full-screen-intent PendingIntent.
+
+          directBootAware because an alarm armed before the device was last rebooted must ring
+          on a device that has not been unlocked since, and an activity that is not
+          directBootAware cannot even be started in that state.
+
+          taskAffinity "" plus excludeFromRecents keeps a ringing alarm out of the app's own
+          task and out of the recents list, so dismissing it never leaves a stray card behind
+          and never buries the main screen underneath it. singleTask because a second alarm
+          firing while one is ringing must reuse this instance rather than stack another copy
+          in front of a half-awake person.
+
+          showWhenLocked and turnScreenOn exist as both manifest attributes and activity
+          methods from API 27. Both are used, and they are not redundant with each other: the
+          manifest form is what the system consults when it decides whether it may put this
+          activity over the keyguard at all, while setShowWhenLocked in onCreate only takes
+          effect once the activity exists. RingActivity also sets the deprecated window flags,
+          which are the only mechanism on API 24 to 26.
+
+          tools:targetApi says the two attributes are API 27 and later rather than silencing
+          UnusedAttribute: they are genuinely inert on 24 to 26, and the code covers that range.
+        -->
+        <activity
+            android:name=".alarm.RingActivity"
+            android:exported="false"
+            android:directBootAware="true"
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density|fontScale"
+            android:theme="@style/Theme.Twinlit"
+            tools:targetApi="27" />
+
+        <!--
+          The service that actually rings: audio, vibration, auto-silence and the ongoing
+          notification. systemExempted is the foreground service type Android 14 and later
+          demand for an app that holds an exact-alarm permission, and the one that fits an alarm
+          clock: the ring starts from an alarm the user set, not from a tap on a play button
+          (both source apps declared mediaPlayback before their 2.0.0; Twinlit never did). Android 13 and older have no such type and the code
+          passes none there. There is no "alarm" service type in the platform.
+
+          directBootAware for the same reason as RingActivity: before the first unlock this
+          service is the only thing that can make a noise.
+        -->
+        <service
+            android:name=".alarm.AlarmService"
+            android:exported="false"
+            android:directBootAware="true"
+            android:foregroundServiceType="systemExempted" />
+
+        <!--
+          The alarm going off, plus the Snooze and Dismiss buttons on its notification.
+          exported="false" because every broadcast that reaches it is an explicit Intent this
+          app created: the AlarmManager PendingIntent and the two notification actions. Making
+          the notification buttons broadcasts rather than activities is what keeps them clear
+          of the notification-trampoline ban on Android 12 and later.
+        -->
+        <receiver
+            android:name=".alarm.AlarmFireReceiver"
+            android:exported="false"
+            android:directBootAware="true" />
+
+        <!--
+          Everything that can invalidate what is currently armed. exported="true" because the
+          sender is the system, not this app; on Android 12 and later an exported receiver
+          with an intent-filter is required for these to be delivered at all.
+
+          Each action earns its place, and SystemEventReceiver's KDoc says which failure each
+          one prevents. All of them survive Android 8's implicit-broadcast restriction for
+          manifest-declared receivers, which is exactly why they can be declared here rather
+          than registered while the app happens to be running: an app that is not running is
+          precisely the case that matters.
+
+          LOCKED_BOOT_COMPLETED is the one worth naming twice. It arrives before the first
+          unlock, so the receiver is directBootAware and re-arms from the device-protected
+          rule mirror. Without it, an unattended overnight reboot means the morning alarm
+          simply never rings.
+        -->
+        <receiver
+            android:name=".alarm.SystemEventReceiver"
+            android:exported="true"
+            android:directBootAware="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!--
+          The home screen widgets (SPEC 8, milestone M6): two families, three sizes each, every size
+          its own provider because a launcher lists one picker entry per provider. The Sun family
+          draws from widget/sun/SunWidgets, the Moon family from widget/moon/MoonWidgets;
+          WidgetRefresh redraws both. NO permission, in either edition: plain
+          RemoteViews, a Chronometer that counts down in the launcher (Sun), and inexact setWindow
+          alarms (RTC for the refresh, RTC_WAKEUP for the Sun handover to the static line before
+          sunrise or sunset), neither exact nor an alarm clock. Not exported: APPWIDGET_UPDATE
+          comes from the system. Not directBootAware: the system updates widgets after the first
+          unlock, when the place is readable. No component name contains "alarm". The two editions
+          share this manifest.
+        -->
+
+        <receiver
+            android:name=".widget.sun.SunWidgetSmall"
+            android:exported="false"
+            android:label="@string/widget_sun_small_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_sun_small_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.sun.SunWidgetMedium"
+            android:exported="false"
+            android:label="@string/widget_sun_medium_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_sun_medium_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.sun.SunWidgetLarge"
+            android:exported="false"
+            android:label="@string/widget_sun_large_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_sun_large_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.moon.MoonWidgetSmall"
+            android:exported="false"
+            android:label="@string/widget_moon_small_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_moon_small_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.moon.MoonWidgetMedium"
+            android:exported="false"
+            android:label="@string/widget_moon_medium_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_moon_medium_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.moon.MoonWidgetLarge"
+            android:exported="false"
+            android:label="@string/widget_moon_large_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_moon_large_info" />
+        </receiver>
+
+        <!--
+          The widgets' refresh, handover and system events, one receiver for both families.
+          Disabled until a widget is placed (WidgetRefresh.setEventReceiver), so with no widget a
+          clock change never starts the app. The four system actions reach a receiver that is not
+          exported because the system sends them; the two alarms are this app's own explicit
+          PendingIntents and need no filter. Separate from SystemEventReceiver (alarms); neither
+          depends on the other.
+        -->
+        <receiver
+            android:name=".widget.WidgetEventReceiver"
+            android:enabled="false"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

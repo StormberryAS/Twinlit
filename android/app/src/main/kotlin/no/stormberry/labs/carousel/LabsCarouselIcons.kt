@@ -1,0 +1,35 @@
+// The 21 icons of the other apps are SunApp's generated drawables, copied byte for byte; "twinlit" is
+// this app's own, written by android/tools/build-launcher-icon.py. The one file of the Labs carousel
+// that names this app's R class; every other carousel file is the same in every app.
+package no.stormberry.labs.carousel
+
+import androidx.annotation.DrawableRes
+import no.stormberry.twinlit.R
+
+/** The carousel icon for [slug], or 0 if there is none. */
+@DrawableRes
+internal fun labsSwitcherIcon(slug: String): Int = when (slug) {
+    "astro" -> R.drawable.labs_switcher_astro
+    "beer" -> R.drawable.labs_switcher_beer
+    "check" -> R.drawable.labs_switcher_check
+    "eclipse" -> R.drawable.labs_switcher_eclipse
+    "eco" -> R.drawable.labs_switcher_eco
+    "flare" -> R.drawable.labs_switcher_flare
+    "garden" -> R.drawable.labs_switcher_garden
+    "gdpr" -> R.drawable.labs_switcher_gdpr
+    "labs" -> R.drawable.labs_switcher_labs
+    "metadata" -> R.drawable.labs_switcher_metadata
+    "meteor" -> R.drawable.labs_switcher_meteor
+    "moon" -> R.drawable.labs_switcher_moon
+    "nightmode" -> R.drawable.labs_switcher_nightmode
+    "photo" -> R.drawable.labs_switcher_photo
+    "planet" -> R.drawable.labs_switcher_planet
+    "scheduler" -> R.drawable.labs_switcher_scheduler
+    "star" -> R.drawable.labs_switcher_star
+    "sun" -> R.drawable.labs_switcher_sun
+    "tide" -> R.drawable.labs_switcher_tide
+    "twinlit" -> R.drawable.labs_switcher_twinlit
+    "username" -> R.drawable.labs_switcher_username
+    "weather" -> R.drawable.labs_switcher_weather
+    else -> 0
+}

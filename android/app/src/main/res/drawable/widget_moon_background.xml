@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The home screen widgets' panel: the app's background, #050810, at 70 per cent opacity (alpha B3;
+  2.0.0, Marcos 2026-11-19, it was 95 per cent in 1.0.8), on every wallpaper and in both system
+  themes, because the app itself is dark only (decision D2). The wallpaper shows through, so the
+  text contrast depends on the wallpaper. The worst case is a plain white one, where the panel
+  composites to #505257; every widget text colour (colors.xml) reaches at least 4.6 to 1 on that
+  and on the panel over black, and WidgetColoursTest guards it. The widget text styles
+  (widget_styles.xml) add a soft dark text shadow too. The corners follow the system's widget
+  radius on Android 12 and later (values-v31/dimens.xml).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/widget_moon_panel" />
+    <corners android:radius="@dimen/widget_radius" />
+</shape>

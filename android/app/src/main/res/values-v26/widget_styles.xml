@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 8 and later (1.1.9): Inter for the widget text, as in the app, and autosize for the hint
+  only. No other text autosizes: SunWidgets fits every size itself (values/widget_styles.xml).
+-->
+<resources>
+
+    <style name="Widget.Twinlit.Sun.Font" parent="">
+        <item name="android:fontFamily">@font/inter_medium</item>
+    </style>
+
+    <style name="Widget.Twinlit.Sun.HintFit" parent="Widget.Twinlit.Sun.Font">
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">7sp</item>
+        <item name="android:autoSizeMaxTextSize">12sp</item>
+        <item name="android:autoSizeStepGranularity">1px</item>
+    </style>
+</resources>

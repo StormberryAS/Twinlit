@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The large widget, COMPACT arrangement (1.1.9, LargeLayout.COMPACT): the TALL rows without the
+  Dawn and Dusk heads, in smaller text. The default 4x2 and the smallest allowed size
+  (250 x 150 dp) get it, and it is the large widget's first layout. Every row is one fitted
+  text size (TextFit). No sample values: see widget_sun_large_preview.
+  NestedWeights is ignored on purpose: RemoteViews offer no ConstraintLayout, the rows share the
+  height and the cells the width by weight, and the layout is drawn a few times a day.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_sun_background"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:clipToOutline="true"
+    android:layoutDirection="ltr"
+    android:paddingStart="12dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="8dp"
+    tools:ignore="NestedWeights"
+    tools:targetApi="31">
+
+    <LinearLayout
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/header_place"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/header_date"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical|end" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/times_rise"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/times_set"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/times_polar"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Chronometer
+                android:id="@+id/count_chrono"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:countDown="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/count_static"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/noon_label"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="68"
+                android:textColor="@color/widget_sun_text_secondary" />
+
+            <TextView
+                android:id="@+id/noon_value"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/golden_label"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="36"
+                android:textColor="@color/widget_sun_text_secondary" />
+
+            <TextView
+                android:id="@+id/golden_a"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/golden_b"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/golden_span"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="64"
+                android:gravity="center_vertical|end"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/civil_label"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="36"
+                android:textColor="@color/widget_sun_text_secondary" />
+
+            <TextView
+                android:id="@+id/civil_a"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/civil_b"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/civil_span"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="64"
+                android:gravity="center_vertical|end"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/nautical_label"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="36"
+                android:textColor="@color/widget_sun_text_secondary" />
+
+            <TextView
+                android:id="@+id/nautical_a"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/nautical_b"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/nautical_span"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="64"
+                android:gravity="center_vertical|end"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/astro_label"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="36"
+                android:textColor="@color/widget_sun_text_secondary" />
+
+            <TextView
+                android:id="@+id/astro_a"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/astro_b"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="32"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/astro_span"
+                style="@style/Widget.Twinlit.Sun.Compact"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="64"
+                android:gravity="center_vertical|end"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/hint"
+        style="@style/Widget.Twinlit.Sun.Hint"
+        android:text="@string/widget_sun_hint" />
+</FrameLayout>

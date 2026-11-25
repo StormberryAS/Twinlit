@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The widget picker's preview image before Android 12 (1.1.9): a sun over the horizon on the
+  widget panel, in the widget colours (colors.xml). A vector, so the APK still holds no raster
+  image. Android 12 and later show the preview layouts instead (widget_*_preview.xml).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="48dp"
+    android:viewportWidth="96"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="@color/widget_sun_panel"
+        android:pathData="M8,0h80a8,8 0,0 1,8 8v32a8,8 0,0 1,-8 8h-80a8,8 0,0 1,-8 -8v-32a8,8 0,0 1,8 -8z" />
+    <path
+        android:fillColor="@color/widget_sun_gold"
+        android:pathData="M34,34a14,14 0,0 1,28 0z" />
+    <path
+        android:fillColor="@color/widget_sun_blue"
+        android:pathData="M16,35h64v2h-64z" />
+</vector>

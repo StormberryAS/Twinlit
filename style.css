@@ -1,0 +1,575 @@
+/* ================================================================
+   TWINLIT: PRODUCT PAGE STYLESHEET
+   A static page, no scripts. Dark, with the golden-hour warmth of the app icon.
+   The carousel and the footer are the Stormberry Labs chrome, as on SunApp and MoonApp.
+   Every text colour below passes WCAG AA (4.5:1) on the surface it sits on.
+================================================================ */
+
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+  color-scheme: dark;
+
+  /* Background palette: night blue that warms towards the horizon, as in the icon */
+  --bg-base:        #080c18;
+  --bg-surface:     #0e1628;
+  --bg-card:        rgba(14, 22, 48, 0.72);
+  --bg-card-hover:  rgba(22, 34, 70, 0.85);
+
+  /* Accents: the sun's gold and the moon's silver */
+  --accent-gold:    #ffd700;
+  --accent-orange:  #ff8c42;
+  --accent-amber:   #ffb347;
+  --accent-silver:  #c8d8f0;
+  --accent-blue:    #4fc3f7;
+
+  /* Text */
+  --text-primary:   #f0f4ff;
+  --text-secondary: #9aa9d0;
+
+  /* Glass border */
+  --border:         rgba(255, 255, 255, 0.10);
+
+  /* Gradients */
+  --grad-hero:      linear-gradient(165deg, #0d142e 0%, #130f22 50%, #2a1a0c 100%);
+  --grad-primary:   linear-gradient(135deg, #ffd700 0%, #ff8c42 100%);
+
+  /* Spacing scale */
+  --sp-xs:  0.25rem;
+  --sp-sm:  0.5rem;
+  --sp-md:  1rem;
+  --sp-lg:  1.5rem;
+  --sp-xl:  2rem;
+  --sp-2xl: 3rem;
+
+  /* Typography: every font on the page is Inter */
+  --font-sans: 'InterVariable', 'Inter', system-ui, sans-serif;
+
+  /* Radii */
+  --r-sm:   6px;
+  --r-md:   12px;
+  --r-lg:   20px;
+
+  /* Shadows */
+  --shadow-card: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
+
+  /* Transitions */
+  --t-fast: 150ms ease;
+}
+
+/* ── Reset & base ───────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+button, input, select, textarea { font-family: var(--font-sans); }
+
+/* The page follows the reader's own text size: no fixed pixel size on html. */
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 35%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 12%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 28%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 8%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 65% 20%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    var(--grad-hero);
+  background-attachment: fixed;
+}
+
+a { color: var(--accent-blue); text-underline-offset: 2px; }
+a:hover { color: var(--text-primary); }
+
+/* ── Layout containers ──────────────────────────────────────── */
+.main-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--sp-md) var(--sp-md) var(--sp-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-lg);
+}
+
+/* ── HEADER ─────────────────────────────────────────────────── */
+.site-header {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: var(--sp-2xl) var(--sp-md) var(--sp-xl);
+}
+
+.header-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 30%, rgba(255,180,50,0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.header-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-md);
+}
+
+.app-icon {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  box-shadow: 0 0 36px rgba(255, 180, 50, 0.35), 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.header-text h1 {
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.15;
+}
+
+.tagline {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: var(--sp-xs);
+}
+
+/* ── CARDS ──────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-xl);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+
+.card h2 {
+  font-size: 1.25rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: var(--sp-sm);
+}
+
+.card p { color: var(--text-secondary); }
+.card p + p { margin-top: var(--sp-md); }
+.card p strong { color: var(--text-primary); font-weight: 600; }
+
+.lead { font-size: 1.05rem; }
+.lead, .card p.lead { color: var(--text-primary); }
+
+/* ── FEATURES: one block per tab ────────────────────────────── */
+.feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-md);
+  margin: var(--sp-md) 0;
+}
+
+.feature-list li {
+  padding-left: var(--sp-md);
+  border-left: 3px solid var(--accent-amber);
+  color: var(--text-secondary);
+}
+
+.feature-list li.moon { border-left-color: var(--accent-silver); }
+.feature-list li.alarm { border-left-color: var(--accent-orange); }
+.feature-list li.look { border-left-color: var(--accent-blue); }
+
+.feature-list strong {
+  display: block;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── SCREENSHOTS ────────────────────────────────────────────── */
+.shots {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: var(--sp-lg);
+  margin-top: var(--sp-md);
+}
+
+.shots figure { max-width: 280px; width: 100%; }
+
+.shots img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.shots figcaption {
+  margin-top: var(--sp-sm);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@media (min-width: 600px) {
+  .shots { grid-template-columns: repeat(2, 1fr); align-items: start; }
+}
+
+/* ── BUTTONS ────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-sm);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: var(--r-md);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+
+.btn-secondary {
+  background: rgba(79, 195, 247, 0.1);
+  border: 1px solid rgba(79, 195, 247, 0.25);
+  color: var(--accent-blue);
+}
+
+.btn-secondary:hover {
+  background: rgba(79, 195, 247, 0.18);
+  box-shadow: 0 0 16px rgba(79, 195, 247, 0.18);
+  color: var(--text-primary);
+}
+
+/* ── ANDROID APP LINE ───────────────────────────────────────── */
+.android-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-sm);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.android-app strong { color: var(--text-primary); font-weight: 600; }
+
+.android-app .btn {
+  min-height: 44px;
+  max-width: 100%;
+  white-space: normal;
+  text-decoration: none;
+}
+
+/* The two store buttons, Zapstore and Google Play: side by side when they fit,
+   one above the other on a narrow screen. */
+.store-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-sm);
+  max-width: 100%;
+}
+
+/* A store button is shown only once its listing is live (tools/store-live.py sets
+   data-live). While neither is live, the short note below takes the buttons' place. */
+.store-links a[data-live="no"] { display: none; }
+.store-soon { display: none; }
+.android-app:not(:has(a[data-live="yes"])) .store-soon { display: block; }
+
+/* Text for screen readers only, such as " (opens in a new tab)" on the store buttons. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- App switcher carousel ---------------------------------------- */
+/* Stormberry chrome, the MetadataScrubber design (2026-10). The track
+   holds 10 identical sets of cards and slides by exactly one set
+   (-10%), so the loop is seamless. Change the number of sets and the
+   shift together. The page's own app is the last card of each set. */
+.app-switcher-container {
+  padding: 3rem 0;
+  margin-top: 2rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
+  color-scheme: dark;
+}
+
+.switcher-title {
+  margin: 0 0 1.5rem;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  color: var(--text-secondary);
+}
+
+.app-switcher-marquee {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  padding: 0.5rem 1rem 1.5rem;
+}
+
+.app-switcher-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 32s linear infinite;
+}
+
+.app-switcher-marquee:hover .app-switcher-track,
+.app-switcher-marquee:focus-within .app-switcher-track { animation-play-state: paused; }
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-10%); }
+}
+
+.switcher-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-right: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.switcher-card:hover {
+  transform: translateY(-3px);
+  background: var(--bg-card-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  color: var(--text-primary);
+}
+
+.switcher-card img {
+  width: 32px;
+  height: 32px;
+  opacity: 0.9;
+}
+
+/* A visible focus ring on the dark chrome, whatever the page does elsewhere */
+.app-switcher-container a:focus-visible,
+.site-footer a:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+/* The page's own app, the last card of every set, is marked for screen
+   readers (aria-current) and for the eye (an accent border). */
+.switcher-card[aria-current="page"] { border-color: var(--accent-blue); }
+
+.switcher-card:focus-visible { border-radius: 12px; }
+
+/* Keyboard focus stops the slide and the row scrolls to the focused card,
+   so it is never off-screen. */
+.app-switcher-marquee:has(.switcher-card:focus-visible) { overflow-x: auto; }
+.app-switcher-marquee:has(.switcher-card:focus-visible) .app-switcher-track { animation: none; }
+
+/* The pause tick box (WCAG 2.2.2): ticked, the slide stops and the row
+   scrolls by hand. Plain CSS, no script. */
+.app-switcher-container input.switcher-pause {
+  all: revert;
+  margin: 0 0.5rem 0.75rem 0;
+  vertical-align: middle;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.app-switcher-container label.switcher-pause-label {
+  all: revert;
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  vertical-align: middle;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.app-switcher-container input.switcher-pause:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+.switcher-pause:checked ~ .app-switcher-marquee { overflow-x: auto; }
+.switcher-pause:checked ~ .app-switcher-marquee .app-switcher-track { animation: none; }
+
+/* A footer link never breaks inside itself (the org.nr. did at 320 px) */
+.footer-bottom p a { white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Nothing slides, so there is nothing to pause. */
+  .app-switcher-container input.switcher-pause,
+  .app-switcher-container label.switcher-pause-label { display: none; }
+}
+
+/* ---- Footer -------------------------------------------------------- */
+.site-footer {
+  margin-top: auto;
+  padding: 4rem 1.5rem 2rem;
+  background: var(--bg-base);
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
+}
+
+.site-footer p { margin: 0; }
+
+.footer-inner {
+  max-width: 680px;
+  margin: 0 auto 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.footer-brand { max-width: 320px; }
+
+.footer-logo {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-family: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.footer-logo:hover { color: var(--text-primary); }
+.footer-dot { background: linear-gradient(135deg, #E21E26, #FF4D54); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.footer-tagline {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.footer-powered p {
+  max-width: 250px;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* Credit links read as links, as the legal links do */
+.footer-powered a,
+.footer-bottom p a {
+  color: var(--accent-blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 150ms ease;
+}
+
+.footer-powered a:hover,
+.footer-bottom p a:hover { color: var(--text-primary); }
+
+.footer-bottom {
+  max-width: 680px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+.footer-social { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; }
+.footer-social a { color: var(--text-secondary); transition: color 150ms ease, transform 150ms ease; }
+.footer-social a:hover { color: var(--text-primary); transform: translateY(-2px); }
+.footer-social svg { display: block; }
+
+.footer-bottom p { color: var(--text-secondary); font-size: 0.85rem; }
+
+/* The public test of the page's privacy claim */
+.footer-bottom .footer-offline {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.footer-privacy, .footer-ai { opacity: 0.85; }
+
+@media (min-width: 720px) {
+  .switcher-title { padding: 0 2rem; }
+  .app-switcher-marquee { padding: 0.5rem 2rem 1.5rem; }
+  .footer-powered p { text-align: right; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No sliding: the carousel becomes a row the reader scrolls. */
+  .app-switcher-track { animation: none; }
+  .app-switcher-marquee { overflow-x: auto; }
+  .switcher-card,
+  .footer-social a,
+  .btn { transition: none; }
+  .switcher-card:hover,
+  .footer-social a:hover { transform: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ── UTILITIES ──────────────────────────────────────────────── */
+[hidden] { display: none !important; }
+
+@media (max-width: 480px) {
+  .card { padding: var(--sp-lg); }
+}
+
+/* Visible keyboard focus (WCAG 2.4.7) */
+:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }

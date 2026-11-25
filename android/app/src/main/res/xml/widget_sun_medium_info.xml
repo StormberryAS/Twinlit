@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The medium widget "Sun times" (3x1, 1.1.9): sunrise and sunset, and one countdown line
+  (daylight left while the sun is up, the time until the next sunrise otherwise).
+  updatePeriodMillis is 0: the system's periodic update cannot be shorter than 30 minutes and
+  wakes the phone. SunWidgets arms its own inexact alarms instead (WidgetSchedule).
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minWidth="180dp"
+    android:minHeight="40dp"
+    android:minResizeWidth="180dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="400dp"
+    android:maxResizeHeight="200dp"
+    android:targetCellWidth="3"
+    android:targetCellHeight="1"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/widget_sun_medium"
+    android:previewLayout="@layout/widget_sun_medium_preview"
+    android:previewImage="@drawable/widget_preview_sun"
+    android:description="@string/widget_sun_medium_description"
+    tools:targetApi="31" />

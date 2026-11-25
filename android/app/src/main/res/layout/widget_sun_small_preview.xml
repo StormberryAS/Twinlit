@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The picker preview of the small widget (1.1.9, Android 12 and later): widget_sun_small with sample values.
+  Shown only in the widget picker, never on a home screen. The sample is the app's own figures for
+  Oslo, Norway on Monday 16 November 2026 at 13:00 (Europe/Oslo).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_sun_background"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:clipToOutline="true"
+    android:layoutDirection="ltr"
+    android:paddingStart="10dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="6dp"
+    tools:ignore="HardcodedText,NestedWeights,UselessParent"
+    tools:targetApi="31">
+
+    <LinearLayout
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/small_label"
+            style="@style/Widget.Twinlit.Sun.SmallLabel"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:text="Sunset" />
+
+        <TextView
+            android:id="@+id/small_value"
+            style="@style/Widget.Twinlit.Sun.SmallValue"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:text="15:48" />
+    </LinearLayout>
+
+</FrameLayout>

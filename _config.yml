@@ -1,0 +1,34 @@
+# GitHub Pages serves twinlit.stormberry.as from this repository root.
+#
+# Everything listed below is source, tooling or build input that must never be
+# published. Without this file Pages would serve the whole Android tree,
+# including gradlew, the Gradle wrapper jar and local.properties.
+#
+# Jekyll's exclude REPLACES its defaults, so every folder and file that is not a page of
+# the site is named here. theme: null directly above it is the estate rule since 2026-11-06:
+# no theme is loaded, and there is no .nojekyll file.
+theme: null
+exclude:
+  - android/
+  - tools/
+  - data/
+  - fastlane/
+  - .venv/
+  - venv/
+  - README.md
+  - CHANGELOG.md
+  - LICENSE
+  - NOTICE
+  - DISCLAIMER.md
+  - bump_assets.py
+  - zapstore.yaml
+  - description.txt
+# Not present today; named in case they come later (the test and type-checking tooling of the
+# other Labs sites).
+  - node_modules/
+  - package.json
+  - package-lock.json
+  - .npmrc
+  - tsconfig.json
+  - ts/
+  - tests/

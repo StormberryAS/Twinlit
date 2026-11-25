@@ -1,0 +1,4 @@
+First release of Twinlit: sun and moon times, sun and moon alarms in one list, six home screen widgets, and five appearance choices. It replaces SunApp and MoonApp. Places and alarms from those apps are not carried over: Android keeps each app's data to itself.
+
+Twinlit: https://twinlit.stormberry.as
+Release log: https://github.com/StormberryAS/Twinlit/blob/main/CHANGELOG.md

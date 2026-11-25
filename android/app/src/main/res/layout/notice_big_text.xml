@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The expanded Missed, Snoozed, ring and backup ring notices (R14, D117; R12, D123, D124; R12-F, D130 to D132):
+  the title, then the alarm's name when it is long, or the time and a long place, then the sentence, in the
+  system's own notification text styles, set beside the system header by DecoratedCustomViewStyle.
+  Why not the standard BigText template: on Android 16 it turns every no-break space into a plain space
+  and drops the word joiner before it lays the text out, so it wrapped "6:57" and "PM." apart although
+  the app posted U+00A0 (found with NoticeDeviceTest, which reads the shade). A text in the app's own
+  view reaches the screen unchanged. Hyphenation is off here for the same reason as D111, with the
+  attribute instead of a span.
+  The text that carries the time (notice_text) never has a line limit or an ellipsis, so it is never cut. What
+  gives way is a name or a place, each in a view of its own with a line limit and an ellipsis: notice_name
+  (a name over NoticeText.FLOW_NAME_MAX characters, or wider than that many "W"; at most three lines) and
+  notice_place (a ring notice's long place; at most two lines, with the time first in notice_lead).
+  fallbackLineSpacing is off on both, so a script with a tall fall-back font (Tibetan) cannot make a line
+  taller than the line spacing of the main font.
+  The 256 dp of the Android documentation for a custom expanded view is a design budget here, not a limit
+  the system enforces: the shade drew own views of 345 dp (API 36) and 472 dp (API 33) whole. The heights
+  measured at font scale 2.0 on 360 dp are in DECISIONS D124 and D131, for each API level.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/notice_title"
+        style="@android:style/TextAppearance.Material.Notification.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+    <TextView
+        android:id="@+id/notice_name"
+        style="@android:style/TextAppearance.Material.Notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:fallbackLineSpacing="false"
+        android:hyphenationFrequency="none"
+        android:maxLines="3"
+        android:visibility="gone"
+        tools:targetApi="28" />
+
+    <TextView
+        android:id="@+id/notice_lead"
+        style="@android:style/TextAppearance.Material.Notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:hyphenationFrequency="none"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/notice_place"
+        style="@android:style/TextAppearance.Material.Notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fallbackLineSpacing="false"
+        android:hyphenationFrequency="none"
+        android:maxLines="2"
+        android:visibility="gone"
+        tools:targetApi="28" />
+
+    <TextView
+        android:id="@+id/notice_text"
+        style="@android:style/TextAppearance.Material.Notification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:hyphenationFrequency="none" />
+</LinearLayout>

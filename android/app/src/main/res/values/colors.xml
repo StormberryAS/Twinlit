@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--
+      The window background before the first frame: SunApp's night
+      #080C18 in every theme (DECISIONS D45: one window theme, no recreation on a theme change).
+    -->
+    <color name="twinlit_background">#080C18</color>
+
+    <!--
+      The home screen widgets' palette (1.1.9), derived from SunApp's palette (ui/theme/Palettes.kt, Sun Night), with the two labels
+      lightened to meet the rule below: one dark panel, the app's Background #080C18 at 70 per cent opacity
+      (alpha B3), on every wallpaper and in both system themes. The panel lets the wallpaper show
+      through, so the worst case for reading is a plain white wallpaper: the panel over white is
+      #52545D (81.6 / 84.4 / 92.8 before rounding), the colour every text is measured against.
+      THE 4.5 TO 1 RULE: every widget text colour keeps a WCAG contrast of at least 4.5 to 1
+      against the panel over pure white and against the panel over pure black. WidgetColorsTest
+      parses this file and fails when a colour or the panel alpha changes and the rule breaks
+      (and when widget/sun/SunWidgets.kt, which sets some of the colours from code, drifts from this file).
+      A text colour that must change keeps its hue and gets only as much lightness as the rule
+      needs. Every widget text also carries a soft dark shadow (widget_sun_text_shadow, applied in
+      widget_styles.xml).
+    -->
+    <color name="widget_sun_panel">#B3080C18</color>
+    <color name="widget_sun_text_shadow">#B3000000</color>
+    <color name="widget_sun_text_primary">#F0F4FF</color>
+    <!-- Lavender: the labels and the date. -->
+    <color name="widget_sun_text_secondary">#C2CBE3</color>
+    <color name="widget_sun_gold">#FFD700</color>
+    <!-- Cyan: the polar-night line. -->
+    <color name="widget_sun_blue">#84D5F9</color>
+
+    <!--
+      The home screen widgets (1.0.8): the moon palette of ui/theme/Palettes.kt (Moon Night), which the RemoteViews
+      layouts cannot read, with the labels lightened for the panel below (2.0.0, Marcos 2026-11-19).
+      The panel is the background at 70 per cent opacity (alpha B3), so the home wallpaper shows
+      through. The worst case is a plain white wallpaper: the panel over pure white is #505257
+      (79.5 / 81.6 / 87.2 of 255). Every widget text colour below reaches at least 4.6 to 1 (WCAG)
+      against that composite and against the panel over pure black, and keeps its hue: lavender,
+      blue, purple and cyan only gain lightness, as little as the rule needs. WidgetColoursTest
+      parses this file and the colours widget/moon/MoonWidgets.kt uses, and fails if any text colour drops
+      below 4.6 to 1 on either, or if the two disagree. The widget text styles also add a soft dark
+      shadow. widget_moon_border is a hairline, not text; widget_moon_silver and widget_moon_new_moon are the polar
+      labels, which widget/moon/MoonWidgets.kt sets in code.
+    -->
+    <color name="widget_moon_panel">#B3050810</color>
+    <color name="widget_moon_text_primary">#E8EEFF</color>
+    <color name="widget_moon_text_soft">#BBC7E2</color>
+    <color name="widget_moon_text_secondary">#BCC7E1</color>
+    <color name="widget_moon_border">#12FFFFFF</color>
+    <color name="widget_moon_blue">#B4C8E7</color>
+    <color name="widget_moon_violet">#CEC1EA</color>
+    <color name="widget_moon_teal">#79D2F9</color>
+    <!-- Set in code by widget/moon/MoonWidgets.kt (the polar labels), so no layout names them. -->
+    <color name="widget_moon_silver" tools:ignore="UnusedResources">#C8D8F0</color>
+    <color name="widget_moon_new_moon" tools:ignore="UnusedResources">#C1C6DB</color>
+</resources>

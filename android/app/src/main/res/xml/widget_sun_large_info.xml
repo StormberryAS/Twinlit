@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The large widget "Sun times and twilight" (4x2, 1.1.9): the medium content plus solar noon,
+  golden hour and civil, nautical and astronomical twilight. Resizable, never below 250 x 150 dp,
+  so no row is ever dropped; TALL, WIDE or COMPACT by size (LargeLayout).
+  updatePeriodMillis is 0: the system's periodic update cannot be shorter than 30 minutes and
+  wakes the phone. SunWidgets arms its own inexact alarms instead (WidgetSchedule).
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minWidth="250dp"
+    android:minHeight="150dp"
+    android:minResizeWidth="250dp"
+    android:minResizeHeight="150dp"
+    android:maxResizeWidth="560dp"
+    android:maxResizeHeight="480dp"
+    android:targetCellWidth="4"
+    android:targetCellHeight="2"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/widget_sun_large_compact"
+    android:previewLayout="@layout/widget_sun_large_preview"
+    android:previewImage="@drawable/widget_preview_sun"
+    android:description="@string/widget_sun_large_description"
+    tools:targetApi="31" />

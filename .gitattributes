@@ -1,0 +1,5 @@
+# suncalc.js is SunCalc 1.8.0 (BSD-2-Clause, mourner/suncalc), vendored. The library code is
+# unchanged; the header comment carries the copyright line and the licence terms, and NOTICE the full text.
+/tools/golden/suncalc.js linguist-vendored=true
+# Test corpora written by generators (tools/golden/README.md says which).
+/android/app/src/test/resources/*.csv linguist-generated=true

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The medium widget "Sun times" (3x1, 1.1.9): "Sunrise 08:17   Sunset 15:48" (or the polar
+  label) over ONE countdown line: "Daylight left 2:48:50" while the sun is up, "Sunrise in ..."
+  while it is down, a static "Sunset at 15:48" in the last stretch, or a date beyond 24 hours.
+  The countdown is a Chronometer in countdown mode, ticking in the launcher's process, or a plain
+  text; SunWidgets shows exactly one of the two. Both lines get one fitted text size (TextFit).
+  No sample values: see widget_sun_medium_preview.
+  NestedWeights is ignored on purpose: RemoteViews offer no ConstraintLayout, the rows share the
+  height and the cells the width by weight, and the layout is drawn a few times a day.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_sun_background"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:clipToOutline="true"
+    android:layoutDirection="ltr"
+    android:paddingStart="12dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="6dp"
+    tools:ignore="NestedWeights"
+    tools:targetApi="31">
+
+    <LinearLayout
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/times_rise"
+                style="@style/Widget.Twinlit.Sun.Medium"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/times_set"
+                style="@style/Widget.Twinlit.Sun.Medium"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical|end" />
+
+            <TextView
+                android:id="@+id/times_polar"
+                style="@style/Widget.Twinlit.Sun.Medium"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Chronometer
+                android:id="@+id/count_chrono"
+                style="@style/Widget.Twinlit.Sun.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:countDown="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/count_static"
+                style="@style/Widget.Twinlit.Sun.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/hint"
+        style="@style/Widget.Twinlit.Sun.Hint"
+        android:text="@string/widget_sun_hint" />
+</FrameLayout>

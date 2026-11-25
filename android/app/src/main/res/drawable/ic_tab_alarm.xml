@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The Alarms tab's icon (new for Twinlit, hand-written: no icon library). An alarm clock:
+  a ring with two bells and two feet. 24 dp, drawn in black and tinted by the bottom bar.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M12,6.5 A7,7 0 1 0 12,20.5 A7,7 0 1 0 12,6.5 Z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8" />
+    <path
+        android:pathData="M12,10v4l2.6,1.6"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M4.2,8.2 A4,4 0 0 1 8.4,4.2 M19.8,8.2 A4,4 0 0 0 15.6,4.2"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M6.4,19.6l-1.6,1.8 M17.6,19.6l1.6,1.8"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round" />
+</vector>

@@ -1,0 +1,13 @@
+Twinlit is an alarm clock that follows the sun and the moon rather than the clock. Set an alarm for half an hour before sunrise, at moonrise, or on the full moon night, and it recomputes every day as the seasons and the moon move. When you build an alarm it shows you its real fire times before you save it.
+
+It also calculates sunrise, solar noon and sunset, the moon's phase, moonrise, transit and moonset, for any place on Earth, in that place's own timezone, and says plainly when the sun or the moon does not rise or set at all.
+
+Six home screen widgets show the next sunrise or sunset, today's sun times and twilight, and today's moon with its phase and times.
+
+Three tabs: Sun, Moon and Alarms. Choose how it looks under Appearance: Sun, Moon, Twilight, Auto (which follows the sun's daily rhythm at your chosen place) or System.
+
+It runs entirely on your device. There is no INTERNET permission, so it cannot send anything, and there is no location permission either: places come from a bundled catalogue of 25,007 cities or from coordinates you type.
+
+The nine permissions Android lists for this app are all for the alarms: to ring on time, to show the alarm over the lock screen, to keep ringing while the screen is off, and to set your alarms again after a restart. Sun and moon times need none of them, and nothing is asked until you create your first alarm.
+
+Twinlit is a functioning prototype by Stormberry AS, Norway. It replaces SunApp and MoonApp.

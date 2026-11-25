@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TEXTS.md B-1: the name, decided by Marcos (2026-11-17). -->
+    <string name="app_name">Twinlit</string>
+
+    <!-- TEXTS.md L-13 (SHIPPED, SunApp): the toast when no app can open a footer link. -->
+    <string name="no_app_for_link">No app on this device can open that link.</string>
+
+    <!--
+      Home screen widgets (TEXTS.md J-1 to J-14): the picker name and, on Android 12 and later, the
+      description of each of the six widgets, and the placeholder of each widget until its first
+      render. Everything the widgets show at run time is in widget/sun/WidgetText.kt and
+      widget/moon/WidgetText.kt.
+    -->
+    <string name="widget_sun_hint">Open Twinlit once to start the widget.</string>
+    <string name="widget_sun_small_label">Next sun event</string>
+    <string name="widget_sun_small_description">The next sunrise or sunset for your place.</string>
+    <string name="widget_sun_medium_label">Sun times</string>
+    <string name="widget_sun_medium_description">Today\'s sunrise and sunset, and how much daylight is left.</string>
+    <string name="widget_sun_large_label">Sun times and twilight</string>
+    <string name="widget_sun_large_description">Sun times, solar noon, golden hour and twilight for your place.</string>
+    <string name="widget_moon_hint">Open Twinlit once to start the widget.</string>
+    <string name="widget_moon_small_label">Moon</string>
+    <string name="widget_moon_small_description">Today\'s moon as it looks from your hemisphere, and how much of it is lit.</string>
+    <string name="widget_moon_medium_label">Moon and times</string>
+    <string name="widget_moon_medium_description">Today\'s moon, with moonrise, transit and moonset for the place chosen in Twinlit.</string>
+    <string name="widget_moon_large_label">Moon, times and phases</string>
+    <string name="widget_moon_large_description">Today\'s moon and its times, with the dates of the next new moon, first quarter, full moon and last quarter.</string>
+</resources>

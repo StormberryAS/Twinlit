@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The small widget "Next sun event" (2x1, 1.1.9): the next sunrise or sunset and its time.
+  Resizable in width only.
+  updatePeriodMillis is 0: the system's periodic update cannot be shorter than 30 minutes and
+  wakes the phone. SunWidgets arms its own inexact alarms instead (WidgetSchedule).
+-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minWidth="110dp"
+    android:minHeight="40dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="40dp"
+    android:maxResizeWidth="250dp"
+    android:maxResizeHeight="120dp"
+    android:targetCellWidth="2"
+    android:targetCellHeight="1"
+    android:resizeMode="horizontal"
+    android:widgetCategory="home_screen"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/widget_sun_small"
+    android:previewLayout="@layout/widget_sun_small_preview"
+    android:previewImage="@drawable/widget_preview_sun"
+    android:description="@string/widget_sun_small_description"
+    tools:targetApi="31" />

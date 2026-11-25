@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The small widget "Next sun event" (2x1, 1.1.9): the next sunrise or sunset over its time, or the
+  polar label over the date of the next crossing. SunWidgets.renderSmall fills it and sets both
+  text sizes (TextFit). The root is the whole tap target and carries the one spoken description;
+  its children are hidden from TalkBack. Left to right on every phone (layoutDirection ltr): the
+  text is fixed English. No sample values: until the first render the content is hidden and the
+  hint shows (the picker shows widget_sun_small_preview instead).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_sun_background"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:clipToOutline="true"
+    android:layoutDirection="ltr"
+    android:paddingStart="10dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="6dp"
+    tools:targetApi="31">
+
+    <LinearLayout
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:importantForAccessibility="noHideDescendants"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/small_label"
+            style="@style/Widget.Twinlit.Sun.SmallLabel"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
+
+        <TextView
+            android:id="@+id/small_value"
+            style="@style/Widget.Twinlit.Sun.SmallValue"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3" />
+    </LinearLayout>
+
+    <!--
+      Shown until the first render: a widget placed before Twinlit was ever opened stays on this
+      layout, because the system sends a never-started app no widget update.
+    -->
+    <TextView
+        android:id="@+id/hint"
+        style="@style/Widget.Twinlit.Sun.Hint"
+        android:text="@string/widget_sun_hint" />
+</FrameLayout>
